@@ -13,6 +13,7 @@ namespace Task1.Utilities
         {
             return new List<Line>
             {
+                //List of lines as in pdf with the same order
                     Line.CreateBound(new XYZ(0,0,0), new XYZ(79,0,0)),
                     Line.CreateBound(new XYZ(44,25,0), new XYZ(13,25,0)),
                     Line.CreateBound(new XYZ(13,40,0), new XYZ(-8,40,0)),

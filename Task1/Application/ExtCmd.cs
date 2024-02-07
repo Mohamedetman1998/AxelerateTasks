@@ -11,7 +11,7 @@ using Task1.Utilities;
 namespace Task1.Application
 {
     [TransactionAttribute(TransactionMode.Manual)]
-    public class EntryPoint : IExternalCommand
+    public class ExtCmd : IExternalCommand
     {
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)

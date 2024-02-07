@@ -50,14 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\EntryPoint.cs" />
+    <Compile Include="Application\ExtCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\PropChanged.cs" />
     <Compile Include="Utilities\CurveLoopLogic.cs" />
     <Compile Include="Utilities\UserInput.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
