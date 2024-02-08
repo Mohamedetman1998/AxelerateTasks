@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task5.Application
+namespace Task3.Application
 {
     [TransactionAttribute(TransactionMode.Manual)]
-    public class EntryPoint : IExternalCommand
+    public class ExtCmd : IExternalCommand
     {
         public static UIDocument CommandUIdoc { get; set; }
         public static Document CommandDoc { get; set; }
@@ -23,22 +23,6 @@ namespace Task5.Application
             CommandDoc = CommandUIdoc.Document;
 
 
-            #region ModelessWindow
-
-            App application = new App();
-            App.thisApp = application;
-
-            try
-            {
-                application.ShowWindow();
-                return Result.Succeeded;
-            }
-            catch (Exception exp)
-            {
-                TaskDialog.Show("catch", exp.Message);
-            }
-
-            #endregion
 
             return Result.Succeeded;
         }

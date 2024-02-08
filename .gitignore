@@ -19,3 +19,6 @@
 
 #User-specific files
 *.user
+
+#Camtasia Video Projects
+*.camtasiaprojects/

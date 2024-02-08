@@ -50,22 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\App.cs" />
-    <Compile Include="Application\EntryPoint.cs" />
-    <Compile Include="Application\Request.cs" />
-    <Compile Include="Application\RequestHandler.cs" />
-    <Compile Include="Command\MyCommand.cs" />
+    <Compile Include="Application\ExtCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\PropChanged.cs" />
+    <Compile Include="Utilities\RevitUtils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="tips.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Styles &amp; Assets\" />
-    <Folder Include="ViewModel\" />
-    <Folder Include="View\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
