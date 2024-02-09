@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Task1.Utilities
 {
-    internal class CurveLoopLogic
+    public class CurveLoopLogic
     {
         public static IList<CurveLoop> ProcessCurveLoop(List<Line> linesGiven)
         {
