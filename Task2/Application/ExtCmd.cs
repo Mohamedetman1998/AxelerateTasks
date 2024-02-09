@@ -25,55 +25,60 @@ namespace Task2.Application
             CommandUIdoc = commandData.Application.ActiveUIDocument;
             CommandDoc = CommandUIdoc.Document;
 
-            var wallReference = CommandUIdoc.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element);
-            var wallElement = CommandDoc.GetElement(wallReference) as Wall;
+            IList<Autodesk.Revit.DB.BoundarySegment> boundarySegmentList=new List<BoundarySegment>();
+            XYZ roomMidPoint = XYZ.Zero;
 
-            var roomsCollector = new FilteredElementCollector(CommandDoc)
-                                    .OfCategory(BuiltInCategory.OST_Rooms)
-                                    .WhereElementIsNotElementType()
-                                    .Where(a => a.Name.Contains("Bathroom"))
-                                    .Cast<Room>()
-                                    .ToList();
-
-            var wcFamilySymbol = new FilteredElementCollector(CommandDoc)
-                                 .OfCategory(BuiltInCategory.OST_GenericModel)
-                                 .WhereElementIsElementType()
-                                 .Where(a => a.Name == "ADA")
-                                 .Cast<FamilySymbol>()
-                                 .FirstOrDefault();
-
-
-            var roomsFound = RevitUtils.GetRoomsNextToSelectedWall(wallElement, roomsCollector);
-
-            var selectedWallCurve = RevitUtils.GetWallCurve(roomsFound.First(), wallElement);
-
-            var doorsLocPoints= RevitUtils.GetDoorsLocationInRoom(roomsFound.First());
-
-            var familyLocationPoint = RevitUtils.FarestPointToDoor(doorsLocPoints, selectedWallCurve);
-
-            var familyOrientation = RevitUtils.GetFamilyOrientation(roomsFound.First(), familyLocationPoint,wallElement);
-
-            using (Transaction tr = new Transaction(CommandDoc, "Place Family"))
+            try
             {
-                tr.Start();
+                var wallReference = CommandUIdoc.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element);
+                var wallElement = CommandDoc.GetElement(wallReference) as Wall;
 
-                if (!wcFamilySymbol.IsActive)
+                var wcFamilySymbol = new FilteredElementCollector(CommandDoc)
+                                     .OfCategory(BuiltInCategory.OST_GenericModel)
+                                     .WhereElementIsElementType()
+                                     .Where(a => a.Name == "ADA")
+                                     .Cast<FamilySymbol>()
+                                     .FirstOrDefault();
+
+
+                var roomFound = RoomUtils.GetRoomsNextToSelectedWall(wallElement , out boundarySegmentList);
+
+                var selectedWallCurveInRoom = GeoUtils.GetWallCurveInsideRoom(boundarySegmentList, wallElement);
+
+                var doorsLocPoints = RoomUtils.GetDoorsLocationInRoom(roomFound, boundarySegmentList);
+
+                var familyLocationPoint = GeoUtils.FarthestPointToCurve(doorsLocPoints, selectedWallCurveInRoom);
+
+                var familyOrientation = GeoUtils.GetCorrectFamilyOrientation(roomFound, familyLocationPoint, selectedWallCurveInRoom,out roomMidPoint);
+
+                using (Transaction tr = new Transaction(CommandDoc, "Place Family"))
                 {
-                    wcFamilySymbol.Activate();
+                    tr.Start();
+
+                    if (!wcFamilySymbol.IsActive)
+                    {
+                        wcFamilySymbol.Activate();
+                    }
+
+                    var familyCreated = CommandDoc.Create.NewFamilyInstance(familyLocationPoint, wcFamilySymbol, familyOrientation, wallElement, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
+
+                    FamilyInstanceUtils.FamilyOrientationHandler(CommandDoc, familyCreated, familyOrientation, selectedWallCurveInRoom, familyLocationPoint, roomMidPoint);
+                 
+
+                    tr.Commit();
                 }
-
-
-               var familyCreated= CommandDoc.Create.NewFamilyInstance(familyLocationPoint,wcFamilySymbol,wallElement,Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
-
-                if(!familyCreated.FacingOrientation.IsAlmostEqualTo(familyOrientation))
-                {
-                    familyCreated.flipFacing();
-                }
-                tr.Commit();
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Error", ex.Message);
+                return Result.Failed;
 
             }
-            return Result.Succeeded;
         }
+      
+
+
 
     }
 }

@@ -52,7 +52,9 @@
   <ItemGroup>
     <Compile Include="Application\ExtCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\RevitUtils.cs" />
+    <Compile Include="Utilities\FamilyInstanceUtils.cs" />
+    <Compile Include="Utilities\GeoUtils.cs" />
+    <Compile Include="Utilities\RoomUtils.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
