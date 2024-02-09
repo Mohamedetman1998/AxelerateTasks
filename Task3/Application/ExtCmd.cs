@@ -38,7 +38,7 @@ namespace Task3.Application
                  .ToList();
 
                 Level level = CommandDoc.ActiveView.GenLevel;
-                IList<CurveLoop> curveLoops = FloorUtils.RoomsCurveLoops(roomsInProject);
+                IList<CurveLoop> curveLoops = FloorUtils.RoomsCurveLoops(CommandDoc,roomsInProject);
 
                 if (curveLoops != null)
                     using (Transaction transaction = new Transaction(CommandDoc, "Create Floor"))

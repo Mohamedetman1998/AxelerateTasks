@@ -106,6 +106,71 @@ namespace Task2.Utilities
 
             return doorsLocationPoint;
         }
+        public static List<Curve> GetDoorsCurvesInRoom(Room room, IList<BoundarySegment> boundarySegmentList)
+        {
+            if (boundarySegmentList == null)
+            {
+                return null;
+            }
+
+            List<Curve> doorsCurves = new List<Curve>();
+
+            foreach (BoundarySegment boundSeg in boundarySegmentList)
+            {
+                if (boundSeg == null)
+                {
+                    continue;
+                }
+
+                var wallInRoom = ExtCmd.CommandDoc.GetElement(boundSeg.ElementId) as Wall;
+
+                if (wallInRoom == null || !(wallInRoom is HostObject))
+                {
+                    continue;
+                }
+
+                var wallHostObj = wallInRoom as HostObject;
+                var hostedElementsOnWall = wallHostObj.FindInserts(true, true, true, true);
+
+                if (hostedElementsOnWall != null && hostedElementsOnWall.Any())
+                {
+                    var famInstanceCollector = new FilteredElementCollector(ExtCmd.CommandDoc, hostedElementsOnWall)
+                        .OfCategory(BuiltInCategory.OST_Doors)
+                        .WhereElementIsNotElementType()
+                        .Cast<FamilyInstance>()
+                        .Where(A => A != null && (A.ToRoom?.Name == room.Name || A.FromRoom?.Name == room.Name))
+                        .ToList();
+
+                    foreach (var famInstance in famInstanceCollector)
+                    {
+                        var geometryElement = famInstance.get_Geometry(new Options());
+                        foreach (var geometryInstance in geometryElement)
+                        {
+                            var instanceGeometry = geometryInstance as GeometryInstance;
+                            if (instanceGeometry != null)
+                            {
+                                foreach (var geometryObject in instanceGeometry.GetInstanceGeometry())
+                                {
+                                    var curve = geometryObject as Curve;
+                                    if (curve != null)
+                                    {
+                                        doorsCurves.Add(curve);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!doorsCurves.Any())
+            {
+                TaskDialog.Show("Error", $"No doors in this room");
+                return null;
+            }
+
+            return doorsCurves;
+        }
 
     }
 }

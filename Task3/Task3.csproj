@@ -50,7 +50,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="Task1">
       <HintPath>..\Task1\bin\Debug\Task1.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Task2">
+      <HintPath>..\Task2\bin\Debug\Task2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
